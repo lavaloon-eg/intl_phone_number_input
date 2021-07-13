@@ -73,7 +73,7 @@ class SelectorButton extends StatelessWidget {
             minWidth: 0,
             color: selectorColor,
             shape: selectorShape,
-            onPressed: countries.isNotEmpty && countries.length > 1 && isEnabled
+            onPressed: countries.isNotEmpty && countries.length > 1
                 ? () async {
                     Country? selected;
                     if (selectorConfig.selectorType == PhoneInputSelectorType.BOTTOM_SHEET) {
