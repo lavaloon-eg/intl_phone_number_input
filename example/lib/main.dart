@@ -52,26 +52,37 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               selectorConfig: SelectorConfig(
                 selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                backgroundColor: Colors.black,
               ),
               ignoreBlank: false,
               autoValidateMode: AutovalidateMode.disabled,
               selectorTextStyle: TextStyle(color: Colors.black),
               initialValue: number,
               textFieldController: controller,
+              formatInput: false,
+              keyboardType:
+                  TextInputType.numberWithOptions(signed: true, decimal: true),
               inputBorder: OutlineInputBorder(),
+              onSaved: (PhoneNumber number) {
+                print('On Saved: $number');
+              },
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 formKey.currentState.validate();
               },
               child: Text('Validate'),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 getPhoneNumber('+15417543010');
               },
               child: Text('Update'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                formKey.currentState.save();
+              },
+              child: Text('Save'),
             ),
           ],
         ),

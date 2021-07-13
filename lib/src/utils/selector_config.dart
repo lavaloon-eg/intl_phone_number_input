@@ -19,18 +19,27 @@ class SelectorConfig {
   /// [useEmoji], uses emoji flags instead of png assets
   final bool useEmoji;
 
-  final Color backgroundColor;
-
   /// [countryComparator], sort the country list according to the comparator.
   ///
   /// Sorting is disabled by default
-  final CountryComparator countryComparator;
+  final CountryComparator? countryComparator;
+
+  /// [setSelectorButtonAsPrefixIcon], this sets/places the selector button inside the [TextField] as a prefixIcon.
+  final bool setSelectorButtonAsPrefixIcon;
+
+  /// Space before the flag icon
+  final double? leadingPadding;
+
+  /// Add white space for short dial code
+  final bool trailingSpace;
 
   const SelectorConfig({
     this.selectorType = PhoneInputSelectorType.DROPDOWN,
     this.showFlags = true,
     this.useEmoji = false,
-    this.backgroundColor = Colors.white,
     this.countryComparator,
+    this.setSelectorButtonAsPrefixIcon = false,
+    this.leadingPadding,
+    this.trailingSpace = true,
   });
 }

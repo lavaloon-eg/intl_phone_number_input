@@ -6,34 +6,36 @@ import 'package:intl_phone_number_input/src/widgets/countries_search_list_widget
 import 'package:intl_phone_number_input/src/widgets/input_widget.dart';
 import 'package:intl_phone_number_input/src/widgets/item.dart';
 
+/// [SelectorButton]
 class SelectorButton extends StatelessWidget {
   final List<Country> countries;
-  final Country country;
+  final Country? country;
   final SelectorConfig selectorConfig;
-  final TextStyle selectorTextStyle;
-  final InputDecoration searchBoxDecoration;
+  final TextStyle? selectorTextStyle;
+  final InputDecoration? searchBoxDecoration;
   final bool autoFocusSearchField;
-  final String locale;
+  final String? locale;
   final bool isEnabled;
   final bool isScrollControlled;
-  final ValueChanged<Country> onCountryChanged;
-  final Color selectorColor;
-  final ShapeBorder selectorShape;
+  final Color? selectorColor;
+  final ShapeBorder? selectorShape;
+
+  final ValueChanged<Country?> onCountryChanged;
 
   const SelectorButton({
-    Key key,
-    @required this.countries,
-    @required this.country,
-    @required this.selectorConfig,
-    @required this.selectorTextStyle,
-    @required this.searchBoxDecoration,
-    @required this.autoFocusSearchField,
-    @required this.locale,
-    @required this.onCountryChanged,
-    @required this.isEnabled,
-    @required this.isScrollControlled,
-    @required this.selectorColor,
-    @required this.selectorShape,
+    Key? key,
+    required this.countries,
+    required this.country,
+    required this.selectorConfig,
+    required this.selectorTextStyle,
+    required this.searchBoxDecoration,
+    required this.autoFocusSearchField,
+    required this.locale,
+    required this.onCountryChanged,
+    required this.isEnabled,
+    required this.isScrollControlled,
+    required this.selectorColor,
+    required this.selectorShape,
   }) : super(key: key);
 
   @override
@@ -47,6 +49,8 @@ class SelectorButton extends StatelessWidget {
                     country: country,
                     showFlag: selectorConfig.showFlags,
                     useEmoji: selectorConfig.useEmoji,
+                    leadingPadding: selectorConfig.leadingPadding,
+                    trailingSpace: selectorConfig.trailingSpace,
                     textStyle: selectorTextStyle,
                   ),
                   value: country,
@@ -58,6 +62,8 @@ class SelectorButton extends StatelessWidget {
                 country: country,
                 showFlag: selectorConfig.showFlags,
                 useEmoji: selectorConfig.useEmoji,
+                leadingPadding: selectorConfig.leadingPadding,
+                trailingSpace: selectorConfig.trailingSpace,
                 textStyle: selectorTextStyle,
               )
         : MaterialButton(
@@ -67,9 +73,9 @@ class SelectorButton extends StatelessWidget {
             minWidth: 0,
             color: selectorColor,
             shape: selectorShape,
-            onPressed: countries.isNotEmpty && countries.length > 1
+            onPressed: countries.isNotEmpty && countries.length > 1 && isEnabled
                 ? () async {
-                    Country selected;
+                    Country? selected;
                     if (selectorConfig.selectorType == PhoneInputSelectorType.BOTTOM_SHEET) {
                       selected = await showCountrySelectorBottomSheet(context, countries);
                     } else {
@@ -81,15 +87,21 @@ class SelectorButton extends StatelessWidget {
                     }
                   }
                 : null,
-            child: Item(
-              country: country,
-              showFlag: selectorConfig.showFlags,
-              useEmoji: selectorConfig.useEmoji,
-              textStyle: selectorTextStyle,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Item(
+                country: country,
+                showFlag: selectorConfig.showFlags,
+                useEmoji: selectorConfig.useEmoji,
+                leadingPadding: selectorConfig.leadingPadding,
+                trailingSpace: selectorConfig.trailingSpace,
+                textStyle: selectorTextStyle,
+              ),
             ),
           );
   }
 
+  /// Converts the list [countries] to `DropdownMenuItem`
   List<DropdownMenuItem<Country>> mapCountryToDropdownItem(List<Country> countries) {
     return countries.map((country) {
       return DropdownMenuItem<Country>(
@@ -106,7 +118,8 @@ class SelectorButton extends StatelessWidget {
     }).toList();
   }
 
-  Future<Country> showCountrySelectorDialog(BuildContext context, List<Country> countries) {
+  /// shows a Dialog with list [countries] if the [PhoneInputSelectorType.DIALOG] is selected
+  Future<Country?> showCountrySelectorDialog(BuildContext context, List<Country> countries) {
     return showDialog(
       context: context,
       barrierDismissible: true,
@@ -126,23 +139,25 @@ class SelectorButton extends StatelessWidget {
     );
   }
 
-  Future<Country> showCountrySelectorBottomSheet(BuildContext context, List<Country> countries) {
+  /// shows a Dialog with list [countries] if the [PhoneInputSelectorType.BOTTOM_SHEET] is selected
+  Future<Country?> showCountrySelectorBottomSheet(BuildContext context, List<Country> countries) {
     return showModalBottomSheet(
       context: context,
       clipBehavior: Clip.hardEdge,
-      isScrollControlled: isScrollControlled ?? true,
+      isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
       builder: (BuildContext context) {
-        return AnimatedPadding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          duration: const Duration(milliseconds: 100),
-          child: DraggableScrollableSheet(
+        return Stack(children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+          ),
+          DraggableScrollableSheet(
             builder: (BuildContext context, ScrollController controller) {
               return Container(
                 decoration: ShapeDecoration(
-                  color: selectorConfig.backgroundColor,
+                  color: Theme.of(context).canvasColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12),
@@ -162,7 +177,7 @@ class SelectorButton extends StatelessWidget {
               );
             },
           ),
-        );
+        ]);
       },
     );
   }
